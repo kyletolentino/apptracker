@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -10,62 +10,58 @@ db = SQLAlchemy(app)
 
 class Tracker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    # job_id = db.Colum(db.Integer, nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    # status = db.Column(db.String(80), nullable=False)
+    company = db.Column(db.String(50), nullable=False)
+    job_id = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date())
+    status = db.Column(db.String(50), nullable=False)
 
-    def __repr__(self):
-        return '<Tracker %r>' % self.name
+    def __init__(self, company, job_id, date, status):
+        self.company = company
+        self.job_id = job_id
+        self.date = date
+        self.status = status
 
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    all_data = Tracker.query.all()
+
+    return render_template("index.html", jobs = all_data)
+
+@app.route('/insert', methods=['POST'])
+def insert():
     if request.method == 'POST':
-        name = request.form['name']
-        entry = Tracker(name=name)
 
-        try:
-            db.session.add(entry)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return "Uh-oh, we can't add it."
-    
-    else:
-        names = Tracker.query.order_by(Tracker.date).all()
-        return render_template('index.html', names=names)
+        company = request.form['company']
+        job_id = request.form['job_id']
 
-
-@app.route('/delete/<int:id>')
-def delete(id):
-    company = Tracker.query.get_or_404(id)
-
-    try:
-        db.session.delete(company)
+        entry = Tracker(company, job_id, date=datetime.utcnow().date(),status='Applied')
+        db.session.add(entry)
         db.session.commit()
-        return redirect('/')
-    except:
-        return "We couldn't delete that entry."
+
+        return redirect(url_for('index'))
 
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    company = Tracker.query.get_or_404(id)
-
+@app.route('/update', methods=['GET', 'POST'])
+def update():
     if request.method == 'POST':
-        company.name == request.form['name']
+        entry = Tracker.query.get(request.form.get('id'))
+        
+        entry.company = request.form['company']
+        entry.job_id = request.form['job_id']
+        entry.status = request.form['status']
 
-        try:
-            db.session.commit()
-            return redirect('/')
-        except:
-            return "We couldn't update that entry."
-    
+        db.session.commit()
 
-    else:
-        title = "Update Entry"
-        return render_template('update.html', title=title, company=company)
+        return redirect(url_for('index'))
+
+
+@app.route('/delete/<id>/', methods=['GET', 'POST'])
+def delete(id):
+    entry = Tracker.query.get(id)
+    db.session.delete(entry)
+    db.session.commit()
+
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
