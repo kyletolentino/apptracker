@@ -16,7 +16,7 @@ class Tracker(db.Model):
     # status = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
-        return '<Tracker %r>' % self.company
+        return '<Tracker %r>' % self.name
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -36,6 +36,7 @@ def index():
         names = Tracker.query.order_by(Tracker.date).all()
         return render_template('index.html', names=names)
 
+
 @app.route('/delete/<int:id>')
 def delete(id):
     company = Tracker.query.get_or_404(id)
@@ -46,6 +47,26 @@ def delete(id):
         return redirect('/')
     except:
         return "We couldn't delete that entry."
+
+
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    company = Tracker.query.get_or_404(id)
+
+    if request.method == 'POST':
+        company.name == request.form['name']
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return "We couldn't update that entry."
+    
+
+    else:
+        title = "Update Entry"
+        return render_template('update.html', title=title, company=company)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
