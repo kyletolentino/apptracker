@@ -55,13 +55,15 @@ def update():
         return redirect(url_for('index'))
 
 
-@app.route('/delete/<id>/', methods=['GET', 'POST'])
-def delete(id):
-    entry = Tracker.query.get(id)
-    db.session.delete(entry)
-    db.session.commit()
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+     if request.method == 'POST':
+        entry = Tracker.query.get(request.form.get('id'))
 
-    return redirect(url_for('index'))
+        db.session.delete(entry)
+        db.session.commit()
+
+        return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
