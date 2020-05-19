@@ -36,5 +36,16 @@ def index():
         names = Tracker.query.order_by(Tracker.date).all()
         return render_template('index.html', names=names)
 
+@app.route('/delete/<int:id>')
+def delete(id):
+    company = Tracker.query.get_or_404(id)
+
+    try:
+        db.session.delete(company)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return "We couldn't delete that entry."
+
 if __name__ == "__main__":
     app.run(debug=True)
