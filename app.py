@@ -12,7 +12,7 @@ class Tracker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company = db.Column(db.String(50), nullable=False)
     job_id = db.Column(db.Integer, nullable=False)
-    date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date())
+    date = db.Column(db.Date, nullable=False, default=datetime.now().date())
     status = db.Column(db.String(50), nullable=False)
 
     def __init__(self, company, job_id, date, status):
@@ -34,7 +34,7 @@ def insert():
         company = request.form['company']
         job_id = request.form['job_id']
 
-        entry = Tracker(company, job_id, date=datetime.utcnow().date(),status='Applied')
+        entry = Tracker(company, job_id, date=datetime.now().date(),status='Applied')
         db.session.add(entry)
         db.session.commit()
 

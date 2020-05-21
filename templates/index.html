@@ -1,23 +1,26 @@
 {% extends 'base.html' %}
-{% include 'header.html' %}
+<!-- {% include 'header.html' %} -->
 
-{% block title %} Home {% endblock %}
+<!-- {% block title %} Home {% endblock %} -->
 
 
 {% block body %}
 
 <div class="container">
+    <h1 class="my-4">Dashboard <small class="text-muted"> Welcome back!</small></h1>
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#mymodal">Add New Application</button>
+    <div class="col-xs-2" style="float: right">
+        <input type="search" class="form-control" placeholder="Search" id="filterInput">
+    </div>
+
+    <br>
+    <br>
+
     <div class="row">
         <div class="col md-12">
 
-            <div class="jumbotron p-3">
-
-                <h2>Manage Applications <button type="button" class="btn btn-success float-right"
-                    data-toggle="modal" data-target="#mymodal">Add New Application</button></h2>
-
-
-                <table class="table table-hover table-dark">
-                    <tr>
+                <table class="table table-hover">
+                    <thead>
                         <th>#</th>
                         <th>Company</th>
                         <th>Job ID</th>
@@ -25,11 +28,12 @@
                         <th>Status</th>
                         <!-- style="width:  8.33%" -->
                         <th>Action</th>
-                    </tr>
+                    </thead>
 
                     {% for row in jobs %}
 
-                    <tr>
+                    <tbody id="myTable">
+                    <tr class="no-border">
                         <td>{{ row.id }}</td>
                         <td>{{ row.company }}</td>
                         <td>{{ row.job_id }}</td>
@@ -39,9 +43,9 @@
                         <td>
                             <a href="/update/{{ row.id }}" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modaledit{{row.id}}">Edit</a>
                             <a href="/delete/{{ row.id }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modaldelete{{row.id}}">Delete</a>
-                            <!-- <a href="/delete/{{ row.id }}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete?')">Delete</a> -->
                         </td>
                     </tr>
+                    </tbody>
 
                     <!-- delete popup -->
                     <div class="modal fade" id="modaldelete{{row.id}}" tabindex="-1" role="dialog" aria-labelledby="modaldeleteTitle" aria-hidden="true">
@@ -49,9 +53,6 @@
                           <div class="modal-content">
                             <div class="modal-header">
                               <h4 class="modal-title" id="exampleModalLongTitle"><b>Delete Application?</b></h4>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
                             </div>
 
                             <form action="{{ url_for('delete') }}" method="POST">
@@ -134,7 +135,7 @@
                      {% endfor %}
 
                 </table>
-            </div>
+            <!-- </div> -->
 
             <div id="mymodal" class="modal fade" role="dialog">
                 <div class="modal-dialog">
