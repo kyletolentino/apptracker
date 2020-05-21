@@ -27,6 +27,7 @@ def index():
 
     return render_template("index.html", jobs = all_data)
 
+
 @app.route('/insert', methods=['POST'])
 def insert():
     if request.method == 'POST':
@@ -49,6 +50,9 @@ def update():
         entry.company = request.form['company']
         entry.job_id = request.form['job_id']
         entry.status = request.form['status']
+
+        # request.form['date'] is str type, must convert
+        entry.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
 
         db.session.commit()
 
