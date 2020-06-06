@@ -21,6 +21,7 @@ class Tracker(db.Model):
         self.date = date
         self.status = status
 
+
 @app.route('/')
 def index():
     all_data = Tracker.query.all()
@@ -34,8 +35,10 @@ def insert():
 
         company = request.form['company']
         job_id = request.form['job_id']
+        date = datetime.strptime(request.form['date'], '%Y-%m-%d')
 
-        entry = Tracker(company, job_id, date=datetime.now().date(),status='Applied')
+        # entry = Tracker(company, job_id, date=datetime.now().date(),status='Applied')
+        entry = Tracker(company, job_id, date, status='Applied')
         db.session.add(entry)
         db.session.commit()
 
@@ -50,7 +53,6 @@ def update():
         entry.company = request.form['company']
         entry.job_id = request.form['job_id']
         entry.status = request.form['status']
-        # print(request.form['status'])
 
         # request.form['date'] is str type, must convert
         entry.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
