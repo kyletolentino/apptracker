@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///apps.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -37,7 +37,6 @@ def insert():
         job_id = request.form['job_id']
         date = datetime.strptime(request.form['date'], '%Y-%m-%d')
 
-        # entry = Tracker(company, job_id, date=datetime.now().date(),status='Applied')
         entry = Tracker(company, job_id, date, status='Applied')
         db.session.add(entry)
         db.session.commit()
